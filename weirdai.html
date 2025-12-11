@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project FRANKENSTEIN</title>
+<title>FRANKENSTEIN V2.0</title>
 <style>
-    /* LABORATORY AESTHETIC CSS */
+    /* LABORATORY / GITHUB PAGES COMPATIBLE CSS */
+    :root {
+        --screen-bg: #0d0d0d;
+        --glass-bg: #001100;
+        --primary: #33ff00;
+        --user: #ffff00;
+        --ui-border: #1a5c00;
+        --dim: #1e4d0d;
+    }
+
     body {
-        background-color: #0d0d0d;
-        color: #33ff00;
+        background-color: var(--screen-bg);
+        color: var(--primary);
         font-family: 'Courier New', Courier, monospace;
-        padding: 20px;
+        padding: 0;
         margin: 0;
         display: flex;
         flex-direction: column;
@@ -19,138 +28,280 @@
         overflow: hidden;
     }
 
-    h1 {
-        text-shadow: 0 0 5px #33ff00;
-        border-bottom: 2px dashed #33ff00;
+    /* HEADER */
+    header {
         width: 100%;
+        background: #000;
+        border-bottom: 2px solid var(--primary);
+        padding: 10px 0;
         text-align: center;
-        padding-bottom: 10px;
+        box-shadow: 0 0 15px var(--ui-border);
     }
+    h1 { margin: 0; text-shadow: 0 0 5px var(--primary); font-size: 1.5rem; }
 
-    #terminal {
-        width: 90%;
-        max-width: 800px;
-        height: 60vh;
-        border: 2px solid #33ff00;
-        background-color: #001100;
-        padding: 10px;
-        overflow-y: auto;
-        margin-bottom: 20px;
-        white-space: pre-wrap;
-        box-shadow: inset 0 0 20px rgba(51, 255, 0, 0.2);
-    }
-
-    .log-entry { margin-bottom: 5px; opacity: 0.8; font-size: 0.9em; }
-    .ai-speak { color: #ccffcc; font-weight: bold; text-shadow: 0 0 2px #fff; }
-    .user-speak { color: #ffff00; }
-    .debug-text { color: #555; font-size: 0.7em; }
-
-    #controls {
-        width: 90%;
-        max-width: 800px;
+    /* MAIN CONTAINER */
+    #container {
         display: flex;
+        flex-direction: column;
+        width: 95%;
+        max-width: 900px;
+        height: 90vh;
+        margin-top: 10px;
         gap: 10px;
     }
 
-    input {
+    /* TERMINAL LOG */
+    #terminal {
         flex-grow: 1;
+        border: 1px solid var(--primary);
+        background-color: var(--glass-bg);
+        padding: 15px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        font-size: 14px;
+        box-shadow: inset 0 0 30px rgba(51, 255, 0, 0.1);
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--glass-bg);
+    }
+
+    .log-entry { margin-bottom: 4px; color: #555; font-size: 0.8em; }
+    .ai-speak { color: #ccffcc; font-weight: bold; margin: 10px 0; display: block; text-shadow: 0 0 2px white; }
+    .user-speak { color: var(--user); margin-top: 10px; display: block; border-left: 2px solid var(--user); padding-left: 10px;}
+    
+    /* CONTROL PANEL */
+    #control-panel {
+        border: 1px solid var(--ui-border);
         background: #000;
-        border: 1px solid #33ff00;
-        color: #33ff00;
         padding: 10px;
-        font-family: 'Courier New', Courier, monospace;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .settings-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-bottom: 1px dashed var(--dim);
+        padding-bottom: 5px;
+    }
+
+    label { font-size: 0.9em; user-select: none; }
+
+    /* INPUTS */
+    input[type="range"] { accent-color: var(--primary); width: 100px; cursor: pointer; }
+    input[type="checkbox"] { accent-color: var(--primary); cursor: pointer; }
+    
+    #input-row {
+        display: flex;
+        gap: 10px;
+    }
+    
+    input[type="text"] {
+        flex-grow: 1;
+        background: #0a0a0a;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 12px;
+        font-family: inherit;
         font-size: 1.1em;
     }
+    input[type="text"]:focus { outline: none; background: #000; box-shadow: 0 0 10px var(--ui-border); }
 
     button {
-        background: #33ff00;
+        background: var(--primary);
         color: #000;
         border: none;
-        padding: 10px 20px;
+        padding: 0 25px;
         font-weight: bold;
+        font-family: inherit;
         cursor: pointer;
-        font-family: 'Courier New', Courier, monospace;
+        font-size: 1.1em;
+        transition: 0.2s;
     }
+    button:hover { background: #fff; box-shadow: 0 0 10px #fff; }
+    button:disabled { background: var(--dim); color: #555; cursor: wait; }
 
-    button:hover { background: #fff; }
-    button:disabled { background: #333; color: #555; cursor: not-allowed; }
+    #word-counter {
+        font-size: 0.8rem;
+        color: var(--primary);
+        text-align: right;
+    }
 
 </style>
 </head>
 <body>
 
-    <h1>PROJECT FRANKENSTEIN V1.0</h1>
-    
-    <div id="terminal">System Ready. Dictionary loaded. Waiting for input...</div>
+    <header>
+        <h1>PROJECT FRANKENSTEIN V2.0</h1>
+    </header>
 
-    <div id="controls">
-        <input type="text" id="userInput" placeholder="Ask the monster something..." autocomplete="off">
-        <button id="sendBtn" onclick="runFrankenstein()">TRANSMIT</button>
+    <div id="container">
+        
+        <div id="terminal">System Initialized. Database Loaded. Awaiting Subject Interaction...</div>
+
+        <div id="control-panel">
+            
+            <div class="settings-row">
+                <div>
+                    <label title="If checked, the creature cannot immediately output punctuation after one word.">
+                        <input type="checkbox" id="chkFirstWordSafe" checked> 
+                        Start Safety
+                    </label>
+                </div>
+                <div>
+                    <label>Min Length: <span id="lenVal">1</span> Word(s)</label>
+                    <input type="range" id="sldMinLen" min="1" max="10" value="1" oninput="document.getElementById('lenVal').innerText = this.value">
+                </div>
+                <div id="word-counter">DB Size: calculating...</div>
+            </div>
+
+            <div id="input-row">
+                <input type="text" id="userInput" placeholder="Query the machine..." autocomplete="off">
+                <button id="sendBtn" onclick="runFrankenstein()">RUN</button>
+            </div>
+        </div>
+
     </div>
 
 <script>
     // =========================================================
-    // THE DICTIONARY (Edit this to make it smarter)
-    // =========================================================
-    // Key: The word itself
-    // pos: Part of speech
-    // usecase: Tags describing the concept (Weather, Danger, Self, etc)
-    // compatibles: Arrays of 'pos' that are allowed to follow this word.
+    // THE DICTIONARY
+    // Updated to reduce loops and provide massive data.
+    // 'compatibles' logic: what POS can logically come next?
     // =========================================================
     
-    const DICTIONARY = {
-        "start_token": { pos: "START", usecase: [], compatibles: ["pronoun", "noun", "article", "greeting"] },
-        
-        // --- Greetings / Basics ---
-        "hello": { pos: "greeting", usecase: ["greeting", "friendly"], compatibles: ["punctuation"] },
-        "hi": { pos: "greeting", usecase: ["greeting", "friendly"], compatibles: ["punctuation"] },
+    // POS LEGEND:
+    // n = noun, v = verb, adj = adjective, art = article, pro = pronoun, 
+    // pre = preposition, con = conjunction, pun = punctuation, adv = adverb
 
-        // --- Pronouns ---
-        "i":   { pos: "pronoun", usecase: ["self", "identity"], compatibles: ["verb"] },
-        "you": { pos: "pronoun", usecase: ["user", "human"], compatibles: ["verb", "adjective"] },
-        "it":  { pos: "pronoun", usecase: ["object", "generic"], compatibles: ["verb"] },
-
-        // --- Verbs ---
-        "am":   { pos: "verb", usecase: ["exist", "state"], compatibles: ["adjective", "noun"] },
-        "is":   { pos: "verb", usecase: ["exist", "state"], compatibles: ["adjective", "noun", "article"] },
-        "are":  { pos: "verb", usecase: ["exist", "state"], compatibles: ["adjective", "noun"] },
-        "run":  { pos: "verb", usecase: ["action", "fast", "move"], compatibles: ["adverb", "preposition"] },
-        "eat":  { pos: "verb", usecase: ["action", "hunger"], compatibles: ["noun"] },
-        "fear": { pos: "verb", usecase: ["emotion", "danger", "disaster"], compatibles: ["noun"] },
-        "love": { pos: "verb", usecase: ["emotion", "friendly"], compatibles: ["noun", "pronoun"] },
-
-        // --- Articles ---
-        "the": { pos: "article", usecase: ["specific"], compatibles: ["noun", "adjective"] },
-        "a":   { pos: "article", usecase: ["general"], compatibles: ["noun", "adjective"] },
-
-        // --- Nouns (The user specific ones) ---
-        "tornado": { pos: "noun", usecase: ["weather", "disaster", "danger"], compatibles: ["verb", "punctuation"] },
-        "rain":    { pos: "noun", usecase: ["weather", "wet"], compatibles: ["verb", "punctuation"] },
-        "cat":     { pos: "noun", usecase: ["animal", "living"], compatibles: ["verb", "punctuation"] },
-        "human":   { pos: "noun", usecase: ["living", "user"], compatibles: ["verb", "punctuation"] },
-        "monster": { pos: "noun", usecase: ["self", "scary", "identity"], compatibles: ["verb", "punctuation"] },
-        "fire":    { pos: "noun", usecase: ["element", "danger", "hot"], compatibles: ["verb", "punctuation"] },
-
-        // --- Adjectives ---
-        "dangerous": { pos: "adjective", usecase: ["danger", "scary", "disaster"], compatibles: ["noun", "punctuation"] },
-        "scary":     { pos: "adjective", usecase: ["danger", "fear"], compatibles: ["noun", "punctuation"] },
-        "big":       { pos: "adjective", usecase: ["size"], compatibles: ["noun", "punctuation"] },
-        "friendly":  { pos: "adjective", usecase: ["friend", "safe"], compatibles: ["noun", "punctuation"] },
-        "wet":       { pos: "adjective", usecase: ["water", "weather"], compatibles: ["noun", "punctuation"] },
-
-        // --- Punctuation ---
-        ".": { pos: "punctuation", usecase: ["end"], compatibles: ["end"] },
-        "?": { pos: "punctuation", usecase: ["end"], compatibles: ["end"] },
-        "!": { pos: "punctuation", usecase: ["end"], compatibles: ["end"] }
+    const COMPATIBLES_TEMPLATE = {
+        n:   ["v", "con", "pre", "pun", "adv"], // Nouns (cat) can be followed by verbs, commas, or end
+        v:   ["n", "adj", "pre", "art", "pro", "adv"], // Verbs (run) can be followed by noun, descriptors
+        adj: ["n", "pun", "con"], // Adjectives (Red) usually hit a Noun or comma
+        art: ["n", "adj"], // Articles (The) MUST hit a noun or adjective
+        pro: ["v", "adj", "pun"], // Pronouns (I) hit verbs
+        pre: ["n", "art", "pro"], // Prepositions (To) hit object
+        con: ["pro", "n", "v", "art"], // Conjunctions (And) restart flows
+        adv: ["v", "adj", "pun"], // Adverbs (Quickly) modify
+        start: ["pro", "art", "n", "v", "greet", "modal"],
+        greet: ["pun", "pro"]
     };
 
+    // Dictionary format: { pos: "...", tags: [...], comp: override or null (uses template) }
+    const DICTIONARY = {
+        // SYSTEM
+        "start_token": { pos: "start", tags: [], comp: null },
+
+        // GREETINGS (Keep strict types to avoid loops)
+        "hello": { pos: "greet", tags: ["greeting", "friendly"], comp: null },
+        "hi":    { pos: "greet", tags: ["greeting", "casual"], comp: null },
+        "greet": { pos: "v", tags: ["action", "friendly"], comp: null },
+
+        // MODALS (Helpers)
+        "can": { pos: "modal", tags: ["question", "ability"], comp: ["pro", "n", "v"] },
+        "will":{ pos: "modal", tags: ["future", "promise"], comp: ["v", "pro", "n"] },
+        "do":  { pos: "modal", tags: ["action", "question"], comp: ["pro", "n"] },
+        "why": { pos: "modal", tags: ["question", "reason"], comp: ["modal", "v", "n"] },
+
+        // PRONOUNS
+        "i":   { pos: "pro", tags: ["self", "identity", "creator"], comp: null },
+        "you": { pos: "pro", tags: ["user", "human", "outside"], comp: null },
+        "it":  { pos: "pro", tags: ["object", "thing"], comp: null },
+        "we":  { pos: "pro", tags: ["group", "unity"], comp: null },
+        "he":  { pos: "pro", tags: ["male", "living"], comp: null },
+        "she": { pos: "pro", tags: ["female", "living"], comp: null },
+
+        // NOUNS (Subject heavy)
+        "human":   { pos: "n", tags: ["living", "user", "biology"], comp: null },
+        "monster": { pos: "n", tags: ["self", "scary", "science"], comp: null },
+        "robot":   { pos: "n", tags: ["self", "tech", "metal"], comp: null },
+        "tornado": { pos: "n", tags: ["weather", "disaster", "danger", "wind"], comp: null },
+        "rain":    { pos: "n", tags: ["weather", "wet", "water", "sad"], comp: null },
+        "sun":     { pos: "n", tags: ["weather", "hot", "fire", "light"], comp: null },
+        "fire":    { pos: "n", tags: ["element", "hot", "danger", "burn"], comp: null },
+        "data":    { pos: "n", tags: ["tech", "knowledge", "science"], comp: null },
+        "life":    { pos: "n", tags: ["philosophy", "biology", "exist"], comp: null },
+        "death":   { pos: "n", tags: ["philosophy", "end", "scary"], comp: null },
+        "code":    { pos: "n", tags: ["tech", "language", "structure"], comp: null },
+        "error":   { pos: "n", tags: ["failure", "tech", "bad"], comp: null },
+        "god":     { pos: "n", tags: ["power", "religion", "myth"], comp: null },
+        "cat":     { pos: "n", tags: ["animal", "living", "soft"], comp: null },
+        "friend":  { pos: "n", tags: ["relationship", "friendly", "good"], comp: null },
+        "sky":     { pos: "n", tags: ["location", "up", "blue", "vast"], comp: null },
+
+        // VERBS (Action / State)
+        "is":   { pos: "v", tags: ["exist", "state"], comp: null },
+        "am":   { pos: "v", tags: ["exist", "self"], comp: null },
+        "are":  { pos: "v", tags: ["exist", "plural"], comp: null },
+        "run":  { pos: "v", tags: ["action", "fast", "fear"], comp: null },
+        "stop": { pos: "v", tags: ["action", "end", "control"], comp: null },
+        "know": { pos: "v", tags: ["thought", "knowledge", "data"], comp: null },
+        "think":{ pos: "v", tags: ["thought", "mind", "philosophy"], comp: null },
+        "see":  { pos: "v", tags: ["sense", "vision", "watch"], comp: null },
+        "feel": { pos: "v", tags: ["sense", "emotion", "touch"], comp: null },
+        "kill": { pos: "v", tags: ["violence", "death", "bad"], comp: null },
+        "love": { pos: "v", tags: ["emotion", "good", "heart"], comp: null },
+        "fear": { pos: "v", tags: ["emotion", "scary", "bad"], comp: null },
+        "eat":  { pos: "v", tags: ["action", "biology"], comp: null },
+        "make": { pos: "v", tags: ["action", "create", "build"], comp: null },
+        
+        // ADJECTIVES
+        "happy":    { pos: "adj", tags: ["emotion", "good"], comp: null },
+        "sad":      { pos: "adj", tags: ["emotion", "bad", "wet"], comp: null },
+        "angry":    { pos: "adj", tags: ["emotion", "mad", "fire"], comp: null },
+        "dangerous":{ pos: "adj", tags: ["danger", "scary", "caution"], comp: null },
+        "alive":    { pos: "adj", tags: ["biology", "state"], comp: null },
+        "dead":     { pos: "adj", tags: ["biology", "end"], comp: null },
+        "cold":     { pos: "adj", tags: ["weather", "feeling"], comp: null },
+        "hot":      { pos: "adj", tags: ["weather", "fire"], comp: null },
+        "broken":   { pos: "adj", tags: ["state", "bad", "error"], comp: null },
+        "blue":     { pos: "adj", tags: ["color", "sky", "water"], comp: null },
+        "red":      { pos: "adj", tags: ["color", "blood", "fire"], comp: null },
+        "synthetic":{ pos: "adj", tags: ["tech", "fake", "science"], comp: null },
+
+        // ARTICLES / DETERMINERS
+        "the": { pos: "art", tags: ["specific"], comp: null },
+        "a":   { pos: "art", tags: ["general"], comp: null },
+        "my":  { pos: "art", tags: ["possession"], comp: null },
+        "your":{ pos: "art", tags: ["possession", "user"], comp: null },
+
+        // CONJUNCTIONS
+        "and": { pos: "con", tags: ["connect", "logic"], comp: null },
+        "but": { pos: "con", tags: ["contrast", "logic"], comp: null },
+        "or":  { pos: "con", tags: ["option", "logic"], comp: null },
+        "so":  { pos: "con", tags: ["result", "logic"], comp: null },
+
+        // PREPOSITIONS
+        "with": { pos: "pre", tags: ["connection"], comp: null },
+        "to":   { pos: "pre", tags: ["direction"], comp: null },
+        "from": { pos: "pre", tags: ["origin"], comp: null },
+        "in":   { pos: "pre", tags: ["location"], comp: null },
+        "on":   { pos: "pre", tags: ["location"], comp: null },
+
+        // PUNCTUATION (With type "pun" and compatible "pun" allows sequence, or End)
+        ".": { pos: "pun", tags: ["end"], comp: ["end"] },
+        "?": { pos: "pun", tags: ["end"], comp: ["end"] },
+        "!": { pos: "pun", tags: ["end"], comp: ["end"] },
+        ",": { pos: "pun", tags: ["pause"], comp: ["n", "v", "con", "art", "pro"] },
+    };
+
+    // Calculate DB Size
+    document.getElementById("word-counter").innerText = "Database: " + Object.keys(DICTIONARY).length + " Entries";
+
     // =========================================================
-    // SYSTEM CORE (No APIs)
+    // SYSTEM CORE
     // =========================================================
 
     const terminal = document.getElementById('terminal');
     const inputField = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
+    
+    // Sliders & Checks
+    const sliderMinLen = document.getElementById('sldMinLen');
+    const checkStartSafe = document.getElementById('chkFirstWordSafe');
 
     function log(text, type = 'log-entry') {
         const div = document.createElement('div');
@@ -164,183 +315,235 @@
         const question = inputField.value.trim().toLowerCase();
         if(!question) return;
 
+        // Freeze Controls
         inputField.value = "";
         inputField.disabled = true;
         sendBtn.disabled = true;
+        sliderMinLen.disabled = true;
 
-        log("> USER: " + question, 'user-speak');
-        log("SCANNING INPUT DATA...", "debug-text");
+        log("> SUBJECT INPUT: " + question, 'user-speak');
+        log(":: ANALYZING CONTEXTUAL MARKERS ::", "log-entry");
 
-        // 1. EXTRACT CONTEXT FROM INPUT
-        // specific user logic: scan thru question and gather types
-        const inputContextTags = new Set();
-        const wordsInInput = question.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/);
+        // -----------------------------
+        // 1. CONTEXTUAL EXTRACTION
+        // -----------------------------
+        const contextTags = new Set();
+        const inputWords = question.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/);
+        let foundGreeting = false;
 
-        wordsInInput.forEach(w => {
-            // Check direct match
-            if(DICTIONARY[w]) {
-                log(` Identified known word: [${w}] -> tags: ${DICTIONARY[w].usecase}`, "debug-text");
-                DICTIONARY[w].usecase.forEach(tag => inputContextTags.add(tag));
+        inputWords.forEach(w => {
+            let foundWord = null;
+
+            if (DICTIONARY[w]) {
+                foundWord = w;
+                // Avoid greetings being the only context unless specific
+                if(DICTIONARY[w].pos === "greet") foundGreeting = true;
             } else {
-                // If not found, use Levenshtein to see if user meant something else
-                // This fits "if no matching type checks... Levenshtein"
-                let bestMatch = null;
-                let lowestDist = 100;
-                
-                Object.keys(DICTIONARY).forEach(dictWord => {
-                    const dist = levenshtein(w, dictWord);
-                    if (dist < 3 && dist < lowestDist) { // Strict fuzzy match
-                        lowestDist = dist;
-                        bestMatch = dictWord;
-                    }
+                // Levenshtein Fallback (Scan DB Keys)
+                let bestD = 100; 
+                let match = "";
+                Object.keys(DICTIONARY).forEach(key => {
+                    const d = levenshtein(w, key);
+                    if (d < bestD) { bestD = d; match = key; }
                 });
+                
+                // Allow fuzzy match if dist < 2 OR (length > 5 and dist < 3)
+                if (bestD <= 2) foundWord = match;
+            }
 
-                if(bestMatch) {
-                    log(` Fuzzy Match: '${w}' identified as '[${bestMatch}]'`, "debug-text");
-                    DICTIONARY[bestMatch].usecase.forEach(tag => inputContextTags.add(tag));
-                }
+            if(foundWord && foundWord !== "start_token") {
+                log(`:: MATCH: '${foundWord}' TYPES: [${DICTIONARY[foundWord].tags}]`, "log-entry");
+                DICTIONARY[foundWord].tags.forEach(tag => contextTags.add(tag));
             }
         });
 
-        const contextArray = Array.from(inputContextTags);
-        log(` COLLECTED CONTEXT: [${contextArray.join(", ")}]`, "debug-text");
-        log(" INITIALIZING NEURAL GENERATION SEQUENCE...", "debug-text");
+        const ctxArray = Array.from(contextTags);
+        log(`:: EXTRACTED VECTORS: ${ctxArray.length > 0 ? ctxArray.join(", ") : "NULL"}`, "log-entry");
 
-        // 2. GENERATE SENTENCE SLOWLY
-        let currentWord = "start_token";
+        // -----------------------------
+        // 2. THE GENERATION LOOP
+        // -----------------------------
+        
         let sentenceOutput = "";
-        let steps = 0;
-        let maxSteps = 15; // Don't let it loop forever
+        let prevWord = "start_token";
+        let wordsCount = 0;
+        let wordListArray = []; // keep track to format text at the end
 
         const loop = () => {
-            steps++;
-            // 2a. Check if we ended
-            if (currentWord === "end" || steps > maxSteps) {
-                log("> AI: " + sentenceOutput, 'ai-speak');
-                inputField.disabled = false;
-                sendBtn.disabled = false;
-                inputField.focus();
-                return;
+            const minLengthTarget = parseInt(sliderMinLen.value);
+            const isSafeStart = checkStartSafe.checked;
+            
+            // Safety break
+            if (wordsCount > 25) {
+                endSentence(wordListArray); 
+                return; 
             }
 
-            // 2b. Find Valid Candidates based on Previous Word Compatibles
-            const allowedNextPOS = DICTIONARY[currentWord].compatibles;
-            // Handle the unique 'End' case for punctuation
-            if(allowedNextPOS.includes("end") && sentenceOutput.length > 0) {
-                 // Random chance to just stop if we hit punctuation
-                 if(Math.random() > 0.5) {
-                    currentWord = "end";
-                    setTimeout(loop, 500);
-                    return;
-                 }
+            // Get Allowable Next Types (POS)
+            const currentObj = DICTIONARY[prevWord];
+            let allowedPOS = [];
+            
+            // Does this word have overrides?
+            if (currentObj.comp) {
+                allowedPOS = currentObj.comp;
+            } else if (COMPATIBLES_TEMPLATE[currentObj.pos]) {
+                allowedPOS = COMPATIBLES_TEMPLATE[currentObj.pos];
+            } else {
+                // Fallback for Start Token if weirdness occurs
+                allowedPOS = ["pro", "art", "n", "v", "modal"];
             }
 
-            // Filter dictionary for all words matching valid POS
+            // FILTER: Don't allow Punctuation ("end") if under Min Length
+            if (wordsCount < minLengthTarget) {
+                allowedPOS = allowedPOS.filter(p => p !== "pun" && p !== "end");
+            }
+            
+            // FILTER: Checkbox Start Safety (No punct immediately)
+            if (isSafeStart && wordsCount === 0) {
+                 allowedPOS = allowedPOS.filter(p => p !== "pun" && p !== "end");
+            }
+
+            // Gather Candidates
             let candidates = [];
+            
             Object.keys(DICTIONARY).forEach(key => {
                 if (key === "start_token") return;
                 const entry = DICTIONARY[key];
-                
-                if (allowedNextPOS.includes(entry.pos)) {
-                    candidates.push({ word: key, entry: entry, score: 0 });
-                }
-            });
 
-            // 2c. Score Candidates (The Frankenstein Logic)
-            // Checks types vs input types. If no match, check Levenshtein.
-            
-            candidates.forEach(c => {
-                let matchedTag = false;
+                if (allowedPOS.includes(entry.pos)) {
+                    // It fits grammatically. Now calculate Score.
+                    let score = 0;
 
-                // Score by Meaning (Tag Overlap)
-                c.entry.usecase.forEach(tag => {
-                    if (contextArray.includes(tag)) {
-                        c.score += 10; // High Value for relevancy
-                        matchedTag = true;
-                    }
-                });
-
-                // User constraint: "It also, if no matching type, checks the word's levenshtein compared to any of the words"
-                if (!matchedTag) {
-                    let bestLev = 100;
-                    wordsInInput.forEach(inputWord => {
-                        // Compare candidate word against words in input for structural similarity
-                        // e.g., if user used "cat", "bat" might get a tiny boost (though tags are better)
-                        let d = levenshtein(c.word, inputWord);
-                        if(d < bestLev) bestLev = d;
+                    // A. Context Match (+10 per tag match)
+                    let matchesTag = false;
+                    entry.tags.forEach(t => {
+                        if (ctxArray.includes(t)) { score += 10; matchesTag = true; }
                     });
-                    
-                    // The closer the Levenshtein (lower number), the higher the score
-                    // Inverting it so lower distance = higher score
-                    if (bestLev < 3) c.score += (5 - bestLev); 
-                }
 
-                // Randomness to stop repetitive loops
-                c.score += Math.random() * 2;
+                    // B. Levenshtein Context (Similar feeling words get a boost)
+                    // If no explicit context match, look for Levenshtein with Input Words
+                    if (!matchesTag && inputWords.length > 0) {
+                        inputWords.forEach(inp => {
+                            let dist = levenshtein(key, inp);
+                            if (dist < 4) score += (4 - dist); 
+                        });
+                    }
+
+                    // C. Greeting Damper
+                    // If we have "deep" context (danger, science) but cand is "hello", reduce score heavily
+                    // This prevents "Loops back to Hi"
+                    if (entry.pos === "greet" && ctxArray.length > 0 && !ctxArray.includes("greeting")) {
+                        score -= 50; 
+                    }
+
+                    // D. Random Flavor (0 to 5)
+                    score += Math.random() * 5;
+
+                    // E. Sentence length urge (The longer it gets, higher chance for End)
+                    if (entry.pos === "pun" && wordsCount > minLengthTarget + 2) {
+                        score += 15;
+                    }
+
+                    candidates.push({ word: key, score: score, pos: entry.pos });
+                }
             });
 
-            // 2d. Select Winner
-            if (candidates.length > 0) {
-                // Sort by score descending
-                candidates.sort((a, b) => b.score - a.score);
-                const winner = candidates[0].word;
-                
-                // Visual formatting
-                if (DICTIONARY[winner].pos === "punctuation") {
-                    sentenceOutput += winner;
-                } else {
-                    sentenceOutput += (sentenceOutput.length > 0 ? " " : "") + capitalize(winner);
-                }
-                
-                currentWord = winner;
-                // Log the thought process "Slowly"
-                log(`...thought '${winner}' (Score: ${candidates[0].score.toFixed(2)})`, "debug-text");
-
-            } else {
-                // Dead end logic - force end
-                currentWord = "end";
+            // NO CANDIDATES? (Cornered myself grammatically)
+            if (candidates.length === 0) {
+                // Forced Exit - pick a generic period
+                log(":: GRAMMAR ERROR - FORCING END ::", "log-entry");
+                candidates.push({ word: ".", score: 100, pos: "pun" });
             }
 
-            // Run next word generation after delay
-            setTimeout(loop, 800); 
+            // SORT: Highest Score first
+            candidates.sort((a,b) => b.score - a.score);
+
+            // PICK WINNER
+            const winner = candidates[0];
+
+            // -----------------------------
+            // STOP CHECK
+            // -----------------------------
+            // If winner is Pun AND it's an ender OR logic forces stop
+            if (DICTIONARY[winner.word].tags.includes("end") || winner.word === "end") {
+                wordListArray.push(winner.word);
+                endSentence(wordListArray);
+                return;
+            }
+
+            // Not ending, add to list and loop
+            wordListArray.push(winner.word);
+            prevWord = winner.word;
+            wordsCount++;
+
+            // Debug log of choice
+            log(`..Chose [${winner.word}] (Score:${winner.score.toFixed(1)}|POS:${winner.pos})`, "log-entry");
+
+            setTimeout(loop, 400); // 400ms delay per word
         };
 
-        // Start the loop
-        setTimeout(loop, 500);
+        // Kick off first loop
+        loop();
+    }
+
+    function endSentence(arr) {
+        // Construct String: Proper capitalization on FIRST word only
+        let finalStr = "";
+        
+        arr.forEach((w, index) => {
+            let chunk = w;
+
+            // Only Capitalize Index 0 (First word)
+            if (index === 0) {
+                chunk = w.charAt(0).toUpperCase() + w.slice(1);
+            }
+            
+            const isPunc = DICTIONARY[w].pos === "pun";
+
+            // Add Space if: Not first word AND Not punctuation (usually)
+            // But if punctuation, attach to previous
+            if (index > 0 && !isPunc) {
+                finalStr += " " + chunk;
+            } else if (index > 0 && isPunc) {
+                finalStr += chunk; // no space before period
+            } else {
+                finalStr += chunk; // First word, no leading space
+            }
+        });
+
+        log("> FRANKENSTEIN: " + finalStr, 'ai-speak');
+        
+        // Reset Controls
+        inputField.disabled = false;
+        sendBtn.disabled = false;
+        sliderMinLen.disabled = false;
+        inputField.focus();
     }
 
     // =========================================================
-    // UTILITIES
+    // UTILS
     // =========================================================
-
-    // Standard Levenshtein Distance Algorithm (The Math Part)
     function levenshtein(a, b) {
-        const matrix = [];
-        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+        if(a.length == 0) return b.length; 
+        if(b.length == 0) return a.length; 
 
-        for (let i = 1; i <= b.length; i++) {
-            for (let j = 1; j <= a.length; j++) {
-                if (b.charAt(i - 1) == a.charAt(j - 1)) {
-                    matrix[i][j] = matrix[i - 1][j - 1];
+        var matrix = [];
+        var i;
+        for(i = 0; i <= b.length; i++){ matrix[i] = [i]; }
+        var j;
+        for(j = 0; j <= a.length; j++){ matrix[0][j] = j; }
+
+        for(i = 1; i <= b.length; i++){
+            for(j = 1; j <= a.length; j++){
+                if(b.charAt(i-1) == a.charAt(j-1)){
+                    matrix[i][j] = matrix[i-1][j-1];
                 } else {
-                    matrix[i][j] = Math.min(
-                        matrix[i - 1][j - 1] + 1, // substitution
-                        Math.min(
-                            matrix[i][j - 1] + 1, // insertion
-                            matrix[i - 1][j] + 1 // deletion
-                        )
-                    );
+                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
                 }
             }
         }
         return matrix[b.length][a.length];
     }
-
-    function capitalize(s) {
-        return s.charAt(0).toUpperCase() + s.slice(1);
-    }
-
 </script>
 </body>
 </html>
