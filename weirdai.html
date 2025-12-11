@@ -3,16 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FRANKENSTEIN V2.0</title>
+<title>FRANKENSTEIN V3.0 - NEURAL LINK</title>
 <style>
     /* LABORATORY / GITHUB PAGES COMPATIBLE CSS */
     :root {
         --screen-bg: #0d0d0d;
         --glass-bg: #001100;
         --primary: #33ff00;
+        --accent: #9dff80;
         --user: #ffff00;
         --ui-border: #1a5c00;
         --dim: #1e4d0d;
+        --highlight: #ff00ff; /* Glitch aesthetic */
     }
 
     body {
@@ -37,7 +39,7 @@
         text-align: center;
         box-shadow: 0 0 15px var(--ui-border);
     }
-    h1 { margin: 0; text-shadow: 0 0 5px var(--primary); font-size: 1.5rem; }
+    h1 { margin: 0; text-shadow: 0 0 5px var(--primary); font-size: 1.5rem; letter-spacing: 2px; }
 
     /* MAIN CONTAINER */
     #container {
@@ -62,11 +64,13 @@
         box-shadow: inset 0 0 30px rgba(51, 255, 0, 0.1);
         scrollbar-width: thin;
         scrollbar-color: var(--primary) var(--glass-bg);
+        background-image: linear-gradient(0deg, transparent 24%, rgba(51, 255, 0, .03) 25%, rgba(51, 255, 0, .03) 26%, transparent 27%, transparent 74%, rgba(51, 255, 0, .03) 75%, rgba(51, 255, 0, .03) 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, rgba(51, 255, 0, .03) 25%, rgba(51, 255, 0, .03) 26%, transparent 27%, transparent 74%, rgba(51, 255, 0, .03) 75%, rgba(51, 255, 0, .03) 76%, transparent 77%, transparent);
+        background-size: 50px 50px;
     }
 
-    .log-entry { margin-bottom: 4px; color: #555; font-size: 0.8em; }
-    .ai-speak { color: #ccffcc; font-weight: bold; margin: 10px 0; display: block; text-shadow: 0 0 2px white; }
-    .user-speak { color: var(--user); margin-top: 10px; display: block; border-left: 2px solid var(--user); padding-left: 10px;}
+    .log-entry { margin-bottom: 4px; color: #4b8f3d; font-size: 0.8em; }
+    .ai-speak { color: var(--accent); font-weight: bold; margin: 15px 0; display: block; text-shadow: 0 0 4px var(--accent); padding: 5px; border-left: 3px solid var(--accent); }
+    .user-speak { color: var(--user); margin-top: 10px; display: block; padding-left: 10px; }
     
     /* CONTROL PANEL */
     #control-panel {
@@ -80,24 +84,22 @@
 
     .settings-row {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        justify-content: flex-start;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 20px;
         border-bottom: 1px dashed var(--dim);
-        padding-bottom: 5px;
+        padding-bottom: 8px;
+        margin-bottom: 5px;
     }
 
-    label { font-size: 0.9em; user-select: none; }
+    label { font-size: 0.85em; user-select: none; display: flex; align-items: center; gap: 5px; color: #88ff88; cursor: pointer; }
+    label:hover { color: #fff; }
 
     /* INPUTS */
     input[type="range"] { accent-color: var(--primary); width: 100px; cursor: pointer; }
-    input[type="checkbox"] { accent-color: var(--primary); cursor: pointer; }
+    input[type="checkbox"] { accent-color: var(--primary); cursor: pointer; width: 16px; height: 16px; }
     
-    #input-row {
-        display: flex;
-        gap: 10px;
-    }
+    #input-row { display: flex; gap: 10px; }
     
     input[type="text"] {
         flex-grow: 1;
@@ -120,14 +122,16 @@
         cursor: pointer;
         font-size: 1.1em;
         transition: 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-    button:hover { background: #fff; box-shadow: 0 0 10px #fff; }
-    button:disabled { background: var(--dim); color: #555; cursor: wait; }
+    button:hover { background: #fff; box-shadow: 0 0 15px var(--primary); }
+    button:disabled { background: var(--dim); color: #555; cursor: not-allowed; box-shadow: none; }
 
     #word-counter {
+        margin-left: auto;
         font-size: 0.8rem;
-        color: var(--primary);
-        text-align: right;
+        color: #555;
     }
 
 </style>
@@ -135,32 +139,41 @@
 <body>
 
     <header>
-        <h1>PROJECT FRANKENSTEIN V2.0</h1>
+        <h1>PROJECT FRANKENSTEIN V3.0</h1>
     </header>
 
     <div id="container">
         
-        <div id="terminal">System Initialized. Database Loaded. Awaiting Subject Interaction...</div>
+        <div id="terminal">System Initialized... Logic Gates Active...
+Memory: READY.
+Loop Protection: ENABLED.
+Ending Mutation: ONLINE.</div>
 
         <div id="control-panel">
             
             <div class="settings-row">
-                <div>
-                    <label title="If checked, the creature cannot immediately output punctuation after one word.">
-                        <input type="checkbox" id="chkFirstWordSafe" checked> 
-                        Start Safety
-                    </label>
-                </div>
-                <div>
-                    <label>Min Length: <span id="lenVal">1</span> Word(s)</label>
+                <label title="Prevents a valid sentence from ending immediately after the first word.">
+                    <input type="checkbox" id="chkFirstWordSafe" checked> 
+                    First Word Immunity
+                </label>
+                
+                <label title="Prevents the machine from choosing word A, then B, then A again (Word Bounce).">
+                    <input type="checkbox" id="chkLoopSafety" checked>
+                    Loop Safety
+                </label>
+
+                <label>
+                    <span>Min Sentences:</span>
                     <input type="range" id="sldMinLen" min="1" max="10" value="1" oninput="document.getElementById('lenVal').innerText = this.value">
-                </div>
-                <div id="word-counter">DB Size: calculating...</div>
+                    <span id="lenVal">1</span>
+                </label>
+
+                <div id="word-counter"></div>
             </div>
 
             <div id="input-row">
-                <input type="text" id="userInput" placeholder="Query the machine..." autocomplete="off">
-                <button id="sendBtn" onclick="runFrankenstein()">RUN</button>
+                <input type="text" id="userInput" placeholder="Data Input Required..." autocomplete="off">
+                <button id="sendBtn" onclick="runFrankenstein()">TRANSMIT</button>
             </div>
         </div>
 
@@ -169,127 +182,117 @@
 <script>
     // =========================================================
     // THE DICTIONARY
-    // Updated to reduce loops and provide massive data.
-    // 'compatibles' logic: what POS can logically come next?
+    // Updated structure with ENDINGS (sub-table) and refined Grammar types
+    // 'v_act' (Eat, run) vs 'v_link' (Is, Am) prevents "Tornado eat friendly".
     // =========================================================
     
-    // POS LEGEND:
-    // n = noun, v = verb, adj = adjective, art = article, pro = pronoun, 
-    // pre = preposition, con = conjunction, pun = punctuation, adv = adverb
-
+    // TEMPLATE: Who can follow who?
     const COMPATIBLES_TEMPLATE = {
-        n:   ["v", "con", "pre", "pun", "adv"], // Nouns (cat) can be followed by verbs, commas, or end
-        v:   ["n", "adj", "pre", "art", "pro", "adv"], // Verbs (run) can be followed by noun, descriptors
-        adj: ["n", "pun", "con"], // Adjectives (Red) usually hit a Noun or comma
-        art: ["n", "adj"], // Articles (The) MUST hit a noun or adjective
-        pro: ["v", "adj", "pun"], // Pronouns (I) hit verbs
-        pre: ["n", "art", "pro"], // Prepositions (To) hit object
-        con: ["pro", "n", "v", "art"], // Conjunctions (And) restart flows
-        adv: ["v", "adj", "pun"], // Adverbs (Quickly) modify
-        start: ["pro", "art", "n", "v", "greet", "modal"],
-        greet: ["pun", "pro"]
+        n:      ["v_act", "v_link", "con", "pre", "pun"], // Noun -> Action, Linking Verb, etc
+        v_act:  ["n", "pre", "art", "pro", "adv"], // Actions target Nouns (run to..., eat apple...)
+        v_link: ["adj", "art", "n", "v_act"],      // Linking targets Adjectives (is happy, is a...)
+        adj:    ["n", "pun", "con", "pre"], 
+        art:    ["n", "adj"], 
+        pro:    ["v_act", "v_link", "modal"], // Pronouns hit Verbs
+        pre:    ["n", "art", "pro"], // Prepositions need Objects
+        con:    ["pro", "n", "art"], // Conjunctions restart
+        adv:    ["v_act", "adj", "pun"],
+        modal:  ["v_act", "v_link", "pro"],
+        greet:  ["pun", "pro", "n"],
+        pun:    ["end", "start"] 
     };
 
-    // Dictionary format: { pos: "...", tags: [...], comp: override or null (uses template) }
     const DICTIONARY = {
         // SYSTEM
-        "start_token": { pos: "start", tags: [], comp: null },
+        "start_token": { pos: "start", tags: [], endings: [] },
 
-        // GREETINGS (Keep strict types to avoid loops)
-        "hello": { pos: "greet", tags: ["greeting", "friendly"], comp: null },
-        "hi":    { pos: "greet", tags: ["greeting", "casual"], comp: null },
-        "greet": { pos: "v", tags: ["action", "friendly"], comp: null },
+        // GREETINGS
+        "hello": { pos: "greet", tags: ["greeting", "friendly"], endings: [] },
+        "hi":    { pos: "greet", tags: ["greeting", "casual"], endings: [] },
+        "hey":   { pos: "greet", tags: ["greeting", "casual"], endings: [] },
 
-        // MODALS (Helpers)
-        "can": { pos: "modal", tags: ["question", "ability"], comp: ["pro", "n", "v"] },
-        "will":{ pos: "modal", tags: ["future", "promise"], comp: ["v", "pro", "n"] },
-        "do":  { pos: "modal", tags: ["action", "question"], comp: ["pro", "n"] },
-        "why": { pos: "modal", tags: ["question", "reason"], comp: ["modal", "v", "n"] },
+        // MODALS
+        "can": { pos: "modal", tags: ["question", "ability"], endings: ["'t"] },
+        "will":{ pos: "modal", tags: ["future", "promise"], endings: ["'t"] },
+        "do":  { pos: "modal", tags: ["action", "question"], endings: ["n't", "ing"] },
 
         // PRONOUNS
-        "i":   { pos: "pro", tags: ["self", "identity", "creator"], comp: null },
-        "you": { pos: "pro", tags: ["user", "human", "outside"], comp: null },
-        "it":  { pos: "pro", tags: ["object", "thing"], comp: null },
-        "we":  { pos: "pro", tags: ["group", "unity"], comp: null },
-        "he":  { pos: "pro", tags: ["male", "living"], comp: null },
-        "she": { pos: "pro", tags: ["female", "living"], comp: null },
+        "i":   { pos: "pro", tags: ["self", "identity", "creator"], endings: ["'m", "'ve"] },
+        "you": { pos: "pro", tags: ["user", "human", "outside"], endings: ["'re", "'ve"] },
+        "it":  { pos: "pro", tags: ["object", "thing"], endings: ["'s"] },
+        "we":  { pos: "pro", tags: ["group", "unity"], endings: ["'re"] },
+        "he":  { pos: "pro", tags: ["male", "living"], endings: ["'s"] },
+        "she": { pos: "pro", tags: ["female", "living"], endings: ["'s"] },
 
-        // NOUNS (Subject heavy)
-        "human":   { pos: "n", tags: ["living", "user", "biology"], comp: null },
-        "monster": { pos: "n", tags: ["self", "scary", "science"], comp: null },
-        "robot":   { pos: "n", tags: ["self", "tech", "metal"], comp: null },
-        "tornado": { pos: "n", tags: ["weather", "disaster", "danger", "wind"], comp: null },
-        "rain":    { pos: "n", tags: ["weather", "wet", "water", "sad"], comp: null },
-        "sun":     { pos: "n", tags: ["weather", "hot", "fire", "light"], comp: null },
-        "fire":    { pos: "n", tags: ["element", "hot", "danger", "burn"], comp: null },
-        "data":    { pos: "n", tags: ["tech", "knowledge", "science"], comp: null },
-        "life":    { pos: "n", tags: ["philosophy", "biology", "exist"], comp: null },
-        "death":   { pos: "n", tags: ["philosophy", "end", "scary"], comp: null },
-        "code":    { pos: "n", tags: ["tech", "language", "structure"], comp: null },
-        "error":   { pos: "n", tags: ["failure", "tech", "bad"], comp: null },
-        "god":     { pos: "n", tags: ["power", "religion", "myth"], comp: null },
-        "cat":     { pos: "n", tags: ["animal", "living", "soft"], comp: null },
-        "friend":  { pos: "n", tags: ["relationship", "friendly", "good"], comp: null },
-        "sky":     { pos: "n", tags: ["location", "up", "blue", "vast"], comp: null },
+        // NOUNS 
+        "human":   { pos: "n", tags: ["living", "user", "biology"], endings: ["s"] },
+        "monster": { pos: "n", tags: ["self", "scary", "science"], endings: ["s"] },
+        "machine": { pos: "n", tags: ["self", "tech", "metal"], endings: ["s"] },
+        "tornado": { pos: "n", tags: ["weather", "disaster", "danger", "wind"], endings: ["s"] },
+        "rain":    { pos: "n", tags: ["weather", "wet", "water", "sad"], endings: [] },
+        "sun":     { pos: "n", tags: ["weather", "hot", "fire", "light"], endings: ["light"] },
+        "fire":    { pos: "n", tags: ["element", "hot", "danger", "burn"], endings: ["place"] },
+        "data":    { pos: "n", tags: ["tech", "knowledge", "science"], endings: ["base"] },
+        "cat":     { pos: "n", tags: ["animal", "living", "soft"], endings: ["s"] },
+        "sky":     { pos: "n", tags: ["location", "up", "blue", "vast"], endings: [] },
+        "god":     { pos: "n", tags: ["power", "religion"], endings: ["s"] },
+        "time":    { pos: "n", tags: ["physics", "long"], endings: ["s"] },
 
-        // VERBS (Action / State)
-        "is":   { pos: "v", tags: ["exist", "state"], comp: null },
-        "am":   { pos: "v", tags: ["exist", "self"], comp: null },
-        "are":  { pos: "v", tags: ["exist", "plural"], comp: null },
-        "run":  { pos: "v", tags: ["action", "fast", "fear"], comp: null },
-        "stop": { pos: "v", tags: ["action", "end", "control"], comp: null },
-        "know": { pos: "v", tags: ["thought", "knowledge", "data"], comp: null },
-        "think":{ pos: "v", tags: ["thought", "mind", "philosophy"], comp: null },
-        "see":  { pos: "v", tags: ["sense", "vision", "watch"], comp: null },
-        "feel": { pos: "v", tags: ["sense", "emotion", "touch"], comp: null },
-        "kill": { pos: "v", tags: ["violence", "death", "bad"], comp: null },
-        "love": { pos: "v", tags: ["emotion", "good", "heart"], comp: null },
-        "fear": { pos: "v", tags: ["emotion", "scary", "bad"], comp: null },
-        "eat":  { pos: "v", tags: ["action", "biology"], comp: null },
-        "make": { pos: "v", tags: ["action", "create", "build"], comp: null },
+        // VERBS - STATE (Linking: Is, Am, Are)
+        "is":   { pos: "v_link", tags: ["exist", "state"], endings: ["n't"] },
+        "am":   { pos: "v_link", tags: ["exist", "self"], endings: [] },
+        "are":  { pos: "v_link", tags: ["exist", "plural"], endings: ["n't"] },
+        "was":  { pos: "v_link", tags: ["exist", "past"], endings: ["n't"] },
+
+        // VERBS - ACTION (Run, Eat)
+        "run":  { pos: "v_act", tags: ["action", "fast", "fear"], endings: ["s", "ning"] },
+        "know": { pos: "v_act", tags: ["thought", "knowledge", "data"], endings: ["s", "ing"] },
+        "see":  { pos: "v_act", tags: ["sense", "vision", "watch"], endings: ["s", "ing"] },
+        "feel": { pos: "v_act", tags: ["sense", "emotion", "touch"], endings: ["s", "ing"] },
+        "kill": { pos: "v_act", tags: ["violence", "death", "bad"], endings: ["s", "ing", "ed"] },
+        "love": { pos: "v_act", tags: ["emotion", "good", "heart"], endings: ["s", "ing", "ed"] },
+        "fear": { pos: "v_act", tags: ["emotion", "scary", "bad"], endings: ["s", "ing", "ed"] },
+        "eat":  { pos: "v_act", tags: ["action", "biology"], endings: ["s", "ing", "en"] },
+        "make": { pos: "v_act", tags: ["action", "create", "build"], endings: ["s", "ing"] },
+        "break":{ pos: "v_act", tags: ["action", "bad", "destroy"], endings: ["s", "ing"] },
         
         // ADJECTIVES
-        "happy":    { pos: "adj", tags: ["emotion", "good"], comp: null },
-        "sad":      { pos: "adj", tags: ["emotion", "bad", "wet"], comp: null },
-        "angry":    { pos: "adj", tags: ["emotion", "mad", "fire"], comp: null },
-        "dangerous":{ pos: "adj", tags: ["danger", "scary", "caution"], comp: null },
-        "alive":    { pos: "adj", tags: ["biology", "state"], comp: null },
-        "dead":     { pos: "adj", tags: ["biology", "end"], comp: null },
-        "cold":     { pos: "adj", tags: ["weather", "feeling"], comp: null },
-        "hot":      { pos: "adj", tags: ["weather", "fire"], comp: null },
-        "broken":   { pos: "adj", tags: ["state", "bad", "error"], comp: null },
-        "blue":     { pos: "adj", tags: ["color", "sky", "water"], comp: null },
-        "red":      { pos: "adj", tags: ["color", "blood", "fire"], comp: null },
-        "synthetic":{ pos: "adj", tags: ["tech", "fake", "science"], comp: null },
+        "happy":    { pos: "adj", tags: ["emotion", "good"], endings: [] },
+        "sad":      { pos: "adj", tags: ["emotion", "bad", "wet"], endings: [] },
+        "angry":    { pos: "adj", tags: ["emotion", "mad", "fire"], endings: [] },
+        "dangerous":{ pos: "adj", tags: ["danger", "scary", "caution"], endings: [] },
+        "dead":     { pos: "adj", tags: ["biology", "end"], endings: [] },
+        "cold":     { pos: "adj", tags: ["weather", "feeling"], endings: [] },
+        "hot":      { pos: "adj", tags: ["weather", "fire"], endings: [] },
+        "blue":     { pos: "adj", tags: ["color", "sky", "water"], endings: [] },
+        "red":      { pos: "adj", tags: ["color", "blood", "fire"], endings: [] },
 
-        // ARTICLES / DETERMINERS
-        "the": { pos: "art", tags: ["specific"], comp: null },
-        "a":   { pos: "art", tags: ["general"], comp: null },
-        "my":  { pos: "art", tags: ["possession"], comp: null },
-        "your":{ pos: "art", tags: ["possession", "user"], comp: null },
+        // ARTICLES
+        "the": { pos: "art", tags: ["specific"], endings: [] },
+        "a":   { pos: "art", tags: ["general"], endings: [] },
+        "my":  { pos: "art", tags: ["possession"], endings: [] },
+        "your":{ pos: "art", tags: ["possession", "user"], endings: [] },
 
         // CONJUNCTIONS
-        "and": { pos: "con", tags: ["connect", "logic"], comp: null },
-        "but": { pos: "con", tags: ["contrast", "logic"], comp: null },
-        "or":  { pos: "con", tags: ["option", "logic"], comp: null },
-        "so":  { pos: "con", tags: ["result", "logic"], comp: null },
-
+        "and": { pos: "con", tags: ["connect", "logic"], endings: [] },
+        "but": { pos: "con", tags: ["contrast", "logic"], endings: [] },
+        
         // PREPOSITIONS
-        "with": { pos: "pre", tags: ["connection"], comp: null },
-        "to":   { pos: "pre", tags: ["direction"], comp: null },
-        "from": { pos: "pre", tags: ["origin"], comp: null },
-        "in":   { pos: "pre", tags: ["location"], comp: null },
-        "on":   { pos: "pre", tags: ["location"], comp: null },
+        "with": { pos: "pre", tags: ["connection"], endings: [] },
+        "to":   { pos: "pre", tags: ["direction"], endings: [] },
+        "in":   { pos: "pre", tags: ["location"], endings: [] },
+        "on":   { pos: "pre", tags: ["location"], endings: [] },
 
-        // PUNCTUATION (With type "pun" and compatible "pun" allows sequence, or End)
-        ".": { pos: "pun", tags: ["end"], comp: ["end"] },
-        "?": { pos: "pun", tags: ["end"], comp: ["end"] },
-        "!": { pos: "pun", tags: ["end"], comp: ["end"] },
-        ",": { pos: "pun", tags: ["pause"], comp: ["n", "v", "con", "art", "pro"] },
+        // PUNCTUATION 
+        // comp: explicit list of what can follow
+        ".": { pos: "pun", tags: ["end"], endings: [], comp: ["end"] },
+        "?": { pos: "pun", tags: ["end"], endings: [], comp: ["end"] },
+        "!": { pos: "pun", tags: ["end"], endings: [], comp: ["end"] },
+        ",": { pos: "pun", tags: ["pause"], endings: [], comp: ["n", "v_act", "v_link", "pro", "con"] },
     };
 
     // Calculate DB Size
-    document.getElementById("word-counter").innerText = "Database: " + Object.keys(DICTIONARY).length + " Entries";
+    document.getElementById("word-counter").innerText = "CORE MEMORY: " + Object.keys(DICTIONARY).length + " CLUSTERS";
 
     // =========================================================
     // SYSTEM CORE
@@ -299,9 +302,10 @@
     const inputField = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     
-    // Sliders & Checks
+    // Controls
     const sliderMinLen = document.getElementById('sldMinLen');
     const checkStartSafe = document.getElementById('chkFirstWordSafe');
+    const checkLoopSafe = document.getElementById('chkLoopSafety');
 
     function log(text, type = 'log-entry') {
         const div = document.createElement('div');
@@ -315,31 +319,29 @@
         const question = inputField.value.trim().toLowerCase();
         if(!question) return;
 
-        // Freeze Controls
+        // UI Freeze
         inputField.value = "";
         inputField.disabled = true;
         sendBtn.disabled = true;
-        sliderMinLen.disabled = true;
-
-        log("> SUBJECT INPUT: " + question, 'user-speak');
-        log(":: ANALYZING CONTEXTUAL MARKERS ::", "log-entry");
+        
+        log("> USER: " + question, 'user-speak');
+        log(":: SCANNING LEXICON FOR VECTOR MATCHES...", "log-entry");
 
         // -----------------------------
-        // 1. CONTEXTUAL EXTRACTION
+        // 1. INPUT ANALYSIS
         // -----------------------------
         const contextTags = new Set();
+        // Simple tokenizer
         const inputWords = question.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split(/\s+/);
-        let foundGreeting = false;
-
+        
         inputWords.forEach(w => {
             let foundWord = null;
 
+            // Direct Check
             if (DICTIONARY[w]) {
                 foundWord = w;
-                // Avoid greetings being the only context unless specific
-                if(DICTIONARY[w].pos === "greet") foundGreeting = true;
             } else {
-                // Levenshtein Fallback (Scan DB Keys)
+                // Levenshtein fuzzy scan
                 let bestD = 100; 
                 let match = "";
                 Object.keys(DICTIONARY).forEach(key => {
@@ -347,203 +349,201 @@
                     if (d < bestD) { bestD = d; match = key; }
                 });
                 
-                // Allow fuzzy match if dist < 2 OR (length > 5 and dist < 3)
+                // Allow fuzzy if close enough
                 if (bestD <= 2) foundWord = match;
             }
 
             if(foundWord && foundWord !== "start_token") {
-                log(`:: MATCH: '${foundWord}' TYPES: [${DICTIONARY[foundWord].tags}]`, "log-entry");
                 DICTIONARY[foundWord].tags.forEach(tag => contextTags.add(tag));
             }
         });
 
         const ctxArray = Array.from(contextTags);
-        log(`:: EXTRACTED VECTORS: ${ctxArray.length > 0 ? ctxArray.join(", ") : "NULL"}`, "log-entry");
+        // Force random topic if empty to avoid pure gibberish
+        if (ctxArray.length === 0) {
+            ctxArray.push("exist");
+            log(":: INPUT VAGUE. DEFAULTING TO EXISTENTIAL PARAMETERS.", "log-entry");
+        } else {
+            log(`:: PARAMETERS DETECTED: [${ctxArray.join(" / ")}]`, "log-entry");
+        }
 
         // -----------------------------
-        // 2. THE GENERATION LOOP
+        // 2. GENERATION LOOP
         // -----------------------------
+        let sentenceWords = []; // Array of pure words
+        let prevWordObj = DICTIONARY["start_token"];
         
-        let sentenceOutput = "";
-        let prevWord = "start_token";
-        let wordsCount = 0;
-        let wordListArray = []; // keep track to format text at the end
+        // Counters
+        let wordsGenerated = 0;
+        const limit = 20; // Hard cap
 
         const loop = () => {
             const minLengthTarget = parseInt(sliderMinLen.value);
-            const isSafeStart = checkStartSafe.checked;
+            const isLoopSafe = checkLoopSafe.checked;
             
-            // Safety break
-            if (wordsCount > 25) {
-                endSentence(wordListArray); 
-                return; 
+            // Hard Limit Break
+            if (wordsGenerated >= limit) {
+                finalizeSentence(sentenceWords);
+                return;
             }
 
-            // Get Allowable Next Types (POS)
-            const currentObj = DICTIONARY[prevWord];
+            // A. Get Allowed POS (Types) based on previous word
             let allowedPOS = [];
             
-            // Does this word have overrides?
-            if (currentObj.comp) {
-                allowedPOS = currentObj.comp;
-            } else if (COMPATIBLES_TEMPLATE[currentObj.pos]) {
-                allowedPOS = COMPATIBLES_TEMPLATE[currentObj.pos];
+            if (prevWordObj.comp) {
+                // Explicit overrides (e.g., Punctuation overrides defaults)
+                allowedPOS = prevWordObj.comp;
             } else {
-                // Fallback for Start Token if weirdness occurs
-                allowedPOS = ["pro", "art", "n", "v", "modal"];
+                // Use template
+                allowedPOS = COMPATIBLES_TEMPLATE[prevWordObj.pos] || ["n", "pro"];
             }
 
-            // FILTER: Don't allow Punctuation ("end") if under Min Length
-            if (wordsCount < minLengthTarget) {
+            // Safety Filters
+            if (wordsGenerated === 0 && checkStartSafe.checked) {
                 allowedPOS = allowedPOS.filter(p => p !== "pun" && p !== "end");
             }
-            
-            // FILTER: Checkbox Start Safety (No punct immediately)
-            if (isSafeStart && wordsCount === 0) {
-                 allowedPOS = allowedPOS.filter(p => p !== "pun" && p !== "end");
+            if (wordsGenerated < minLengthTarget) {
+                allowedPOS = allowedPOS.filter(p => p !== "pun" && p !== "end");
             }
 
-            // Gather Candidates
+            // B. Filter Dictionary for Candidates
             let candidates = [];
             
             Object.keys(DICTIONARY).forEach(key => {
                 if (key === "start_token") return;
                 const entry = DICTIONARY[key];
 
+                // Must match grammar rule
                 if (allowedPOS.includes(entry.pos)) {
-                    // It fits grammatically. Now calculate Score.
+                    
+                    // Loop Safety Check
+                    if (isLoopSafe) {
+                        // Check last 2 words to avoid rebound (A B A)
+                        if (sentenceWords.length > 0 && sentenceWords[sentenceWords.length-1] === key) return; // Immediate duplicate
+                        if (sentenceWords.length > 1 && sentenceWords[sentenceWords.length-2] === key) return; // Rebound duplicate
+                    }
+
+                    // --- SCORING ALGORITHM ---
                     let score = 0;
 
-                    // A. Context Match (+10 per tag match)
-                    let matchesTag = false;
+                    // 1. Context Relevance
                     entry.tags.forEach(t => {
-                        if (ctxArray.includes(t)) { score += 10; matchesTag = true; }
+                        if (ctxArray.includes(t)) score += 20; 
                     });
 
-                    // B. Levenshtein Context (Similar feeling words get a boost)
-                    // If no explicit context match, look for Levenshtein with Input Words
-                    if (!matchesTag && inputWords.length > 0) {
+                    // 2. Input Structure Matching (Levenshtein against inputs)
+                    if (inputWords.length > 0) {
                         inputWords.forEach(inp => {
                             let dist = levenshtein(key, inp);
-                            if (dist < 4) score += (4 - dist); 
+                            if (dist < 3) score += (5 - dist);
                         });
                     }
 
-                    // C. Greeting Damper
-                    // If we have "deep" context (danger, science) but cand is "hello", reduce score heavily
-                    // This prevents "Loops back to Hi"
-                    if (entry.pos === "greet" && ctxArray.length > 0 && !ctxArray.includes("greeting")) {
-                        score -= 50; 
-                    }
+                    // 3. Greeting Anti-Loop
+                    // If we already outputted a greeting, severely penalize doing it again
+                    if (entry.pos === "greet" && wordsGenerated > 0) score -= 100;
+                    
+                    // 4. Grammar Bias (Action vs State)
+                    // Reduce chance of random nonsense adjectives appearing where not strictly needed
+                    if (entry.pos === "adj" && Math.random() > 0.6) score -= 5;
 
-                    // D. Random Flavor (0 to 5)
-                    score += Math.random() * 5;
+                    // 5. Ending Weight
+                    if (entry.pos === "pun" && wordsGenerated > minLengthTarget + 2) score += 30;
 
-                    // E. Sentence length urge (The longer it gets, higher chance for End)
-                    if (entry.pos === "pun" && wordsCount > minLengthTarget + 2) {
-                        score += 15;
-                    }
-
-                    candidates.push({ word: key, score: score, pos: entry.pos });
+                    candidates.push({ word: key, score: score, entry: entry });
                 }
             });
 
-            // NO CANDIDATES? (Cornered myself grammatically)
+            // Handle Dead Ends (No grammar match)
             if (candidates.length === 0) {
-                // Forced Exit - pick a generic period
-                log(":: GRAMMAR ERROR - FORCING END ::", "log-entry");
-                candidates.push({ word: ".", score: 100, pos: "pun" });
+                candidates.push({ word: ".", score: 999, entry: DICTIONARY["."] });
             }
 
-            // SORT: Highest Score first
-            candidates.sort((a,b) => b.score - a.score);
-
-            // PICK WINNER
+            // Sort High to Low
+            candidates.sort((a,b) => b.score - a.score + (Math.random() * 5));
             const winner = candidates[0];
 
-            // -----------------------------
-            // STOP CHECK
-            // -----------------------------
-            // If winner is Pun AND it's an ender OR logic forces stop
-            if (DICTIONARY[winner.word].tags.includes("end") || winner.word === "end") {
-                wordListArray.push(winner.word);
-                endSentence(wordListArray);
+            // STOP Condition
+            if (winner.word === "end" || (winner.entry.pos === "pun" && winner.entry.tags.includes("end"))) {
+                // If it picked a period, push it and stop
+                if(winner.word !== "end") sentenceWords.push(winner.word);
+                finalizeSentence(sentenceWords);
                 return;
             }
 
-            // Not ending, add to list and loop
-            wordListArray.push(winner.word);
-            prevWord = winner.word;
-            wordsCount++;
+            // --- ENDING MUTATION (The New Sub-Table Logic) ---
+            let finalWordString = winner.word;
+            // 30% chance to mutate if endings exist
+            if (winner.entry.endings.length > 0 && Math.random() > 0.6) {
+                const ending = winner.entry.endings[Math.floor(Math.random() * winner.entry.endings.length)];
+                log(`..mutating [${finalWordString}] + [${ending}]`, "log-entry");
+                finalWordString += ending;
+            }
 
-            // Debug log of choice
-            log(`..Chose [${winner.word}] (Score:${winner.score.toFixed(1)}|POS:${winner.pos})`, "log-entry");
+            // Log decision
+            log(`..linked [${finalWordString}] (Score:${winner.score.toFixed(0)})`, "log-entry");
 
-            setTimeout(loop, 400); // 400ms delay per word
+            sentenceWords.push(finalWordString);
+            prevWordObj = winner.entry; // Pass the base dictionary entry logic forward
+            wordsGenerated++;
+
+            setTimeout(loop, 400);
         };
 
-        // Kick off first loop
-        loop();
+        // START
+        setTimeout(loop, 400);
     }
 
-    function endSentence(arr) {
-        // Construct String: Proper capitalization on FIRST word only
-        let finalStr = "";
-        
-        arr.forEach((w, index) => {
-            let chunk = w;
+    function finalizeSentence(words) {
+        if(words.length === 0) return;
 
-            // Only Capitalize Index 0 (First word)
-            if (index === 0) {
-                chunk = w.charAt(0).toUpperCase() + w.slice(1);
+        let output = "";
+        
+        // Capitalize First Word Only logic
+        for(let i=0; i<words.length; i++) {
+            let w = words[i];
+
+            if (i === 0) {
+                // Standard Cap
+                w = w.charAt(0).toUpperCase() + w.slice(1);
             }
+
+            const isPunctuation = (w.length === 1 && [".","!","?",","].includes(w));
             
-            const isPunc = DICTIONARY[w].pos === "pun";
-
-            // Add Space if: Not first word AND Not punctuation (usually)
-            // But if punctuation, attach to previous
-            if (index > 0 && !isPunc) {
-                finalStr += " " + chunk;
-            } else if (index > 0 && isPunc) {
-                finalStr += chunk; // no space before period
+            if (isPunctuation) {
+                output += w; // no space
+            } else if (i > 0) {
+                output += " " + w; // space before next word
             } else {
-                finalStr += chunk; // First word, no leading space
+                output += w;
             }
-        });
+        }
 
-        log("> FRANKENSTEIN: " + finalStr, 'ai-speak');
+        log("> ENTITY: " + output, 'ai-speak');
         
-        // Reset Controls
+        // Reset controls
         inputField.disabled = false;
         sendBtn.disabled = false;
-        sliderMinLen.disabled = false;
         inputField.focus();
     }
 
-    // =========================================================
-    // UTILS
-    // =========================================================
     function levenshtein(a, b) {
         if(a.length == 0) return b.length; 
         if(b.length == 0) return a.length; 
-
         var matrix = [];
         var i;
         for(i = 0; i <= b.length; i++){ matrix[i] = [i]; }
         var j;
         for(j = 0; j <= a.length; j++){ matrix[0][j] = j; }
-
         for(i = 1; i <= b.length; i++){
             for(j = 1; j <= a.length; j++){
-                if(b.charAt(i-1) == a.charAt(j-1)){
-                    matrix[i][j] = matrix[i-1][j-1];
-                } else {
-                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1));
-                }
+                if(b.charAt(i-1) == a.charAt(j-1)){ matrix[i][j] = matrix[i-1][j-1]; } 
+                else { matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, Math.min(matrix[i][j-1] + 1, matrix[i-1][j] + 1)); }
             }
         }
         return matrix[b.length][a.length];
     }
+
 </script>
 </body>
 </html>
